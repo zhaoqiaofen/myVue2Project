@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { login } from '../api/getData'
+import { registered } from '../api/getData'
 export default {
   name: 'login',
   data () {
@@ -46,13 +46,23 @@ export default {
             username: this.roleFrom.username,
             password: this.roleFrom.password
           }
-          login(data).then(res => {
-            if (res.data.data.verifySuccess) {
-              this.$router.push({path: '/'})
-            }
-          }).catch(err => {
-            console.log('err', err)
+          registered(data).then(res => {
+            console.log('res', res)
           })
+          // login(data).then(res => {
+          //   let data = res.data.data.verifySuccess
+          //   if (data.resultCode === '0') {
+          //     this.$message({
+          //       message: data.message,
+          //       type: 'success'
+          //     })
+          //     this.$router.push({path: '/main'})
+          //   } else if (data.resultCode === '190000001') {
+          //     this.$message.error(data.message)
+          //   }
+          // }).catch(err => {
+          //   console.log('err', err)
+          // })
         } else {
           console.log('error submit!!')
           return false
