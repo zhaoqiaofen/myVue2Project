@@ -12,7 +12,7 @@
               <el-input type="password" ref="loginPassword" v-model="loginFrom.password" placeholder="请输入密码" @keyup.enter.native="loginSubmit('loginFrom')"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" class="login-btn" @click="loginSubmit('loginFrom')">登录</el-button>
+              <el-button type="primary" class="login-btn" @click="loginSubmit('loginFrom')">登  录</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -25,7 +25,7 @@
               <el-input type="password" ref="regPassword" v-model="regFrom.password" placeholder="请输入密码" @keyup.enter.native="regSubmit('regFrom')"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" class="login-btn" @click="regSubmit('regFrom')">注册</el-button>
+              <el-button type="primary" class="login-btn" @click="regSubmit('regFrom')">注  册</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -113,20 +113,25 @@ export default {
     regSubmit (regFrom) {
       this.$refs[regFrom].validate((valid) => {
         if (valid) {
+          let userList = localStorage.getItem('userList')
+          console.log('==reg==userList', JSON.parse(userList))
           let data = {
             username: this.regFrom.username,
-            password: this.regFrom.password
+            password: this.regFrom.password,
+            userList: JSON.parse(userList)
           }
           registered(data).then(res => {
             let data = res.data.data.verifySuccess
             if (data.resultCode === '0') {
-              this.userList = data.userList
+              this.userList = data.userLists
               localStorage.setItem('userList', JSON.stringify(this.userList))
               this.$message({
                 message: data.message,
                 type: 'success'
               })
             } else if (data.resultCode === '190000002') {
+              this.$message.error(data.message)
+            } else if (data.resultCode === '190000003') {
               this.$message.error(data.message)
             }
           })
@@ -138,7 +143,6 @@ export default {
     }
   },
   destroyed () {
-
   }
 }
 </script>
