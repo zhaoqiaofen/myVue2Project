@@ -83,7 +83,6 @@ export default {
       this.$refs[loginFrom].validate((valid) => {
         if (valid) {
           let userList = localStorage.getItem('userList')
-          console.log('userList', JSON.parse(userList))
           let data = {
             username: this.loginFrom.username,
             password: this.loginFrom.password,
@@ -114,7 +113,6 @@ export default {
       this.$refs[regFrom].validate((valid) => {
         if (valid) {
           let userList = localStorage.getItem('userList')
-          console.log('==reg==userList', JSON.parse(userList))
           let data = {
             username: this.regFrom.username,
             password: this.regFrom.password,
