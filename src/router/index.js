@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/view/login'
-import Main from '@/view/main'
 
 Vue.use(Router)
 
@@ -9,18 +7,34 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Login',
-      component: Login
+      redirect: {
+        name: 'Login'
+      }
     },
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: () => import(/* webpackChunkname: 'Login' */ '../view/login.vue')
     },
     {
       path: '/main',
       name: 'Main',
-      component: Main
+      component: () => import(/* webpackChunkname: 'Main' */ '../view/main.vue'),
+      redirect: {
+        name: 'UserList'
+      },
+      children: [
+        {
+          path: '/main/userList',
+          name: 'UserList',
+          component: () => import(/* webpackChunkname: 'UserList' */ '../components/ComUserList.vue')
+        },
+        {
+          path: '/main/interfaceList',
+          name: 'InterfaceList',
+          component: () => import(/* webpackChunkname: 'InterfaceList' */ '../components/ComInterfaceList.vue')
+        }
+      ]
     }
   ]
 })
