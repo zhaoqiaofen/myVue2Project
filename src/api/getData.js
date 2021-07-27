@@ -17,3 +17,21 @@ export function registered (data) {
     data: data
   })
 }
+
+// 获取用户列表
+export function getuserlist (data) {
+  return axios({
+    url: 'https://www.fastmock.site/mock/728223a9738ea2f156e346fc75d13f60/_shop01/api/getUserList',
+    method: 'GET',
+    data: data
+  })
+}
+
+// 删除用户
+// export function deleteuserlist (data) {
+//   return axios({
+//     url: 'https://www.fastmock.site/mock/728223a9738ea2f156e346fc75d13f60/_shop01/api/deleteUserList',
+//     method: 'POST',
+//     data: data
+//   })
+// }
