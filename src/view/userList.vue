@@ -39,7 +39,7 @@
         <template #default="scope">
           <el-button
               size="mini"
-              @click="handleEdit(scope.$index, scope.row)"><i class="el-icon-edit"></i></el-button>
+              @click="handleEdit(scope.$index, scope.row,true)"><i class="el-icon-edit"></i></el-button>
           <el-button
             size="mini"
             type="danger"
@@ -56,26 +56,35 @@
       :page-size="pageSize"
       :current-page="currentPage">
     </el-pagination>
+    <!--修改弹窗-->
+    <com-modify-dialog :visible="visible" :dataItem="dataItem" @hiddenDialogEvent="hiddenDialogEvent"></com-modify-dialog>
   </div>
 </template>
 <script>
 import {getuserlist} from '../api/getData'
+import ComModifyDialog from '../components/ComModifyDialog.vue'
 export default {
   name: 'userList',
+  components: {
+    'com-modify-dialog': ComModifyDialog
+  },
   data () {
     return {
       tableData: [],
       total: 100, // 总条数
       pageSize: 15, // 每页显示的总条数
       currentPage: 1, // 当前页
-      searchVal: '',
-      dataVal: ''
+      searchVal: '', // 搜索内容
+      dataVal: '', // 选择日期
+      visible: false, // 是否显示修改弹窗
+      dataItem: ''
     }
   },
-  created: function () {
+  mounted () {
     this.getUserList()
   },
   methods: {
+    // 获取用户列表
     getUserList () {
       let data = {
         currentPage: this.currentPage
@@ -84,18 +93,55 @@ export default {
         let data = res.data.data.verifySuccess
         if (data.resultCode === '0') {
           this.tableData = data.body.userList
-          this.total = data.body.totalNum
+          this.total = data.body.userList.length
           this.pageSize = data.body.pageSize
           this.currentPage = data.body.currentPage
         }
       })
     },
+    // currentPage 改变时会触发
     handleCurrentChange (currentPage) {
       this.currentPage = currentPage
       this.$refs.multipleTable.bodyWrapper.scrollTop = 0
     },
+    // pageSize 改变时会触发
     handleSizeChange (pageSize) {
       this.pageSize = pageSize
+    },
+    // 删除当前数据
+    handleDelete (index, item) {
+      this.$confirm('确定删除该用户吗', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.tableData.splice(index, 1)
+        this.total = this.tableData.length
+        if (this.tableData.length > this.pageSize && this.tableData.length % this.pageSize === 0 && this.currentPage !== 1) {
+          this.currentPage = this.currentPage - 1
+        } else {
+          this.currentPage = this.currentPage
+        }
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 显示修改弹窗
+    handleEdit (index, item) {
+      this.visible = true
+      this.dataItem = item
+      console.log('this.dataItem', this.dataItem)
+    },
+    // 隐藏修改弹窗
+    hiddenDialogEvent () {
+      this.visible = false
     }
   }
 }

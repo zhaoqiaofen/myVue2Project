@@ -27,7 +27,7 @@ export default new Router({
         {
           path: '/main/userList',
           name: 'UserList',
-          component: () => import(/* webpackChunkname: 'UserList' */ '../components/ComUserList.vue')
+          component: () => import(/* webpackChunkname: 'UserList' */ '../view/userList.vue')
         },
         {
           path: '/main/interfaceList',
