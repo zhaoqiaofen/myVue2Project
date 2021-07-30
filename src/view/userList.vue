@@ -39,7 +39,7 @@
         <template #default="scope">
           <el-button
               size="mini"
-              @click="handleEdit(scope.$index, scope.row,true)"><i class="el-icon-edit"></i></el-button>
+              @click="handleEdit(scope.$index, scope.row)"><i class="el-icon-edit"></i></el-button>
           <el-button
             size="mini"
             type="danger"
@@ -57,7 +57,7 @@
       :current-page="currentPage">
     </el-pagination>
     <!--修改弹窗-->
-    <com-modify-dialog :visible="visible" :dataItem="dataItem" @hiddenDialogEvent="hiddenDialogEvent"></com-modify-dialog>
+    <com-modify-dialog :visible="visible" :dataItem="dataItem" @hiddenDialogEvent="hiddenDialogEvent" @updateItem="updateItemEvent($event)"></com-modify-dialog>
   </div>
 </template>
 <script>
@@ -77,42 +77,16 @@ export default {
       searchVal: '', // 搜索内容
       dataVal: '', // 选择日期
       visible: false, // 是否显示修改弹窗
-      dataItem: {}
+      dataItem: {}, // 要传给修改弹窗的当前值
+      index: 0 // 点击修改时当前列表的下标
     }
   },
-  // 生命周期--start
-  beforeCreate () {
-    // 执行beforeCreate事件钩子，开始监控data对象数据变化，vue内部初始化事件
-    console.log('父组件beforeCreate')
-  },
-  created () {
-    // created事件钩子开始执行，编译模板，把data里面的数据和模板生成html
-    console.log('父组件created')
-  },
-  beforeMount () {
-    // 开始执行beforeMount挂载钩子，注意此时还没有生成html到页面上去，用上面编译好的html内容替换el属性指向的dom对象或者选择权对应的html标签里的内容
-    console.log('父组件beforeMount')
-  },
-  mounted () {
-    // 挂载完成，也就是模板中的html已经渲染到了html页面中，此时一般可以做一些ajax操作，mounted只会执行一次！！实时监控数据变化，随时更新dom
-    console.log('父组件mounted')
-    this.getUserList()
-  },
-  beforeUpdate () {
-    // 更新之前的事件钩子
-    console.log('父组件beforeUpdate')
-  },
-  updated () {
-    // 更新完成后的钩子
-    console.log('父组件updated')
-  },
-  beforeDestroy () {
-    // vue实例销毁前执行的钩子
-    console.log('父组件beforeDestroy')
-  },
-  destroyed () {
-    // vue实例销毁
-    console.log('父组件destroyed')
+  watch: {
+    dataItem (newVal, oldVal) {
+      if (newVal) {
+        this.tableData[this.index] = newVal
+      }
+    }
   },
   methods: {
     // 获取用户列表
@@ -169,18 +143,52 @@ export default {
       this.visible = true
       // let str = 'hellow  world!' // 注意hellow与world之前有两个空格
       // console.log(str.trim().split(/\s+/))
-      let createTimeArr = item.createTime.trim().split(/\s+/)
-      let data1 = createTimeArr[0]
-      let data2 = createTimeArr[1]
-      item['createData1'] = data1
-      item['createData2'] = data2
-      this.dataItem = item
-      console.log('this.dataItem', this.dataItem)
+      this.dataItem = item // 当前值
+      this.index = index // 当前下标
     },
     // 隐藏修改弹窗
     hiddenDialogEvent () {
       this.visible = false
+    },
+    // 修改后的值
+    updateItemEvent (event) {
+      this.visible = false
+      this.dataItem = event
     }
+  },
+  // 生命周期--start
+  beforeCreate () {
+    // 执行beforeCreate事件钩子，开始监控data对象数据变化，vue内部初始化事件
+    console.log('父组件beforeCreate')
+  },
+  created () {
+    // created事件钩子开始执行，编译模板，把data里面的数据和模板生成html
+    console.log('父组件created')
+  },
+  beforeMount () {
+    // 开始执行beforeMount挂载钩子，注意此时还没有生成html到页面上去，用上面编译好的html内容替换el属性指向的dom对象或者选择权对应的html标签里的内容
+    console.log('父组件beforeMount')
+  },
+  mounted () {
+    // 挂载完成，也就是模板中的html已经渲染到了html页面中，此时一般可以做一些ajax操作，mounted只会执行一次！！实时监控数据变化，随时更新dom
+    console.log('父组件mounted')
+    this.getUserList()
+  },
+  beforeUpdate () {
+    // 更新之前的事件钩子
+    console.log('父组件beforeUpdate')
+  },
+  updated () {
+    // 更新完成后的钩子
+    console.log('父组件updated')
+  },
+  beforeDestroy () {
+    // vue实例销毁前执行的钩子
+    console.log('父组件beforeDestroy')
+  },
+  destroyed () {
+    // vue实例销毁
+    console.log('父组件destroyed')
   }
 }
 </script>
