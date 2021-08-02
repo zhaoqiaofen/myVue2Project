@@ -1,9 +1,9 @@
 <template>
   <div class="modifydialog">
-    <el-dialog title="修改用户信息" :visible="visibleEdit" :before-close="handleDialogClose" :close-on-click-modal="false">
+    <el-dialog title="新增用户信息" :visible="visible" :before-close="handleDialogClose" :close-on-click-modal="false">
       <el-form :model="form" ref="form" label-width="100px" label-position="left">
         <el-form-item label="编号">
-          <el-input v-model="form.number" disabled></el-input>
+          <el-input v-model="form.number"></el-input>
         </el-form-item>
         <el-form-item label="姓名">
           <el-input v-model.lazy="form.name"></el-input>
@@ -44,7 +44,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button>重 置</el-button>
-          <el-button type="primary" @click="updateBtn">确 定</el-button>
+          <el-button type="primary" @click="addBtn">确 定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -56,21 +56,12 @@ export default {
   name: 'modifydialog',
   props: {
     // 弹窗的显示与隐藏
-    visibleEdit: {
+    visible: {
       type: Boolean,
       default: false
-    },
-    // 父组件传过来的当前列表数据
-    dataItem: {
-      type: Object,
-      default: () => {}
     }
   },
   watch: {
-    dataItem () {
-      // 如果直接赋值的话，就变成了浅拷贝，复制的是地址，导致在表单中改变值的时候table中的数据也跟着改变，所以要进行深拷贝
-      this.form = JSON.parse(JSON.stringify(this.dataItem))
-    }
   },
   data () {
     return {
@@ -80,7 +71,7 @@ export default {
         phone: '', // 电话
         email: '', // 邮箱
         address: '', // 地址
-        identity: '', // 身份
+        identity: '普通用户', // 身份
         status: 1, // 状态 1开启 2禁用
         department: '', // 部门
         createTime: ''
@@ -90,12 +81,12 @@ export default {
   methods: {
     // 弹窗右上角关闭按钮
     handleDialogClose () {
-      this.$emit('hiddenDialogEvent')
+      this.$emit('hiddenAddDialogEvent')
     },
-    // 确定修改
-    updateBtn () {
-      // 向父组件传值$emit
-      this.$emit('updateItem', this.form)
+    // 确定新增
+    addBtn () {
+      console.log('this.form', this.form)
+      this.$emit('addItem', this.form)
     }
   },
   // 生命周期--start

@@ -7,8 +7,11 @@
       <el-col :span="6">
         <el-date-picker v-model="dataVal" type="date" placeholder="选择日期"></el-date-picker>
       </el-col>
-      <el-col :span="6" style="text-align:left">
+      <el-col :span="3" style="text-align:left">
         <el-button type="primary" icon="el-icon-search">搜索</el-button>
+      </el-col>
+      <el-col :span="3" style="text-align:left">
+        <el-button type="primary" icon="el-icon-circle-plus-outline" @click="handleAdd()">新增</el-button>
       </el-col>
     </el-row>
     <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" ref='multipleTable' border height="390">
@@ -57,16 +60,21 @@
       :current-page="currentPage">
     </el-pagination>
     <!--修改弹窗-->
-    <com-modify-dialog :visible="visible" :dataItem="dataItem" @hiddenDialogEvent="hiddenDialogEvent" @updateItem="updateItemEvent($event)"></com-modify-dialog>
+    <com-modify-dialog :visibleEdit="visibleEdit" :dataItem="dataItem" @hiddenDialogEvent="hiddenDialogEvent" @updateItem="updateItemEvent($event)"></com-modify-dialog>
+    <!--新增弹窗-->
+    <com-add-dialog :visible="visible" @hiddenAddDialogEvent="hiddenAddDialogEvent" @addItem="addItemEvent($event)"></com-add-dialog>
   </div>
 </template>
 <script>
 import {getuserlist} from '../api/getData'
 import ComModifyDialog from '../components/ComModifyDialog.vue'
+import ComAddDialog from '../components/ComAddDialog.vue'
+import {formatDate} from '../libs/utils'
 export default {
   name: 'userList',
   components: {
-    'com-modify-dialog': ComModifyDialog
+    'com-modify-dialog': ComModifyDialog,
+    'com-add-dialog': ComAddDialog
   },
   data () {
     return {
@@ -76,7 +84,8 @@ export default {
       currentPage: 1, // 当前页
       searchVal: '', // 搜索内容
       dataVal: '', // 选择日期
-      visible: false, // 是否显示修改弹窗
+      visibleEdit: false, // 是否显示修改弹窗
+      visible: false,
       dataItem: {}, // 要传给修改弹窗的当前值
       index: 0 // 点击修改时当前列表的下标
     }
@@ -140,7 +149,7 @@ export default {
     },
     // 显示修改弹窗
     handleEdit (index, item) {
-      this.visible = true
+      this.visibleEdit = true
       // let str = 'hellow  world!' // 注意hellow与world之前有两个空格
       // console.log(str.trim().split(/\s+/))
       this.dataItem = item // 当前值
@@ -148,12 +157,27 @@ export default {
     },
     // 隐藏修改弹窗
     hiddenDialogEvent () {
+      this.visibleEdit = false
+    },
+    // 修改后的值（子组件传过来的值）
+    updateItemEvent (event) {
+      this.visibleEdit = false
+      event.createTime = formatDate(event.createTime)
+      this.dataItem = event
+    },
+    // 显示新增弹窗
+    handleAdd () {
+      this.visible = true
+    },
+    // 隐藏新增弹窗
+    hiddenAddDialogEvent () {
       this.visible = false
     },
-    // 修改后的值
-    updateItemEvent (event) {
+    // 确定新增的值
+    addItemEvent (event) {
       this.visible = false
-      this.dataItem = event
+      event.createTime = formatDate(event.createTime)
+      this.tableData.unshift(event)
     }
   },
   // 生命周期--start
