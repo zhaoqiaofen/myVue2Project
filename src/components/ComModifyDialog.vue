@@ -5,17 +5,17 @@
         <el-form-item label="编号">
           <el-input v-model="form.number" disabled></el-input>
         </el-form-item>
-        <el-form-item label="姓名">
-          <el-input v-model.lazy="form.name"></el-input>
+        <el-form-item label="姓名" prop="name" :rules="[{required: true,message: '姓名不能为空'}]">
+          <el-input v-model.lazy="form.name" placeholder="请输入姓名"></el-input>
         </el-form-item>
-        <el-form-item label="电话">
-          <el-input v-model="form.phone"></el-input>
+        <el-form-item label="电话" prop="phone" :rules="[{required: true,message: '电话不能为空'}]">
+          <el-input type="number" v-model="form.phone" placeholder="请输入电话"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email"></el-input>
+        <el-form-item label="邮箱" prop="email" :rules="[{required: true,message: '邮箱不能为空'},{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+          <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
         </el-form-item>
-        <el-form-item label="地址">
-          <el-input v-model="form.address"></el-input>
+        <el-form-item label="地址" prop="address" :rules="[{required: true,message: '地址不能为空'}]">
+          <el-input v-model="form.address" placeholder="请输入地址"></el-input>
         </el-form-item>
         <el-form-item label="身份">
           <el-radio v-model="form.identity" label="管理员">管理员</el-radio>
@@ -24,7 +24,7 @@
         <el-form-item label="状态">
           <el-switch v-model="form.status" active-value='1' inactive-value='2'></el-switch>
         </el-form-item>
-        <el-form-item label="部门">
+        <el-form-item label="部门" prop="department" :rules="[{required: true,message: '部门不能为空'}]">
           <el-select v-model="form.department" placeholder="请选择部门">
             <el-option label="研发部门" value="研发部门"></el-option>
             <el-option label="运营部门" value="运营部门"></el-option>
@@ -32,7 +32,7 @@
             <el-option label="财务部门" value="财务部门"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="创建时间" prop="createTime" :rules="[{required: true,message: '创建时间不能为空'}]">
           <el-date-picker
             v-model="form.createTime"
             type="datetime"
@@ -44,7 +44,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button>重 置</el-button>
-          <el-button type="primary" @click="updateBtn">确 定</el-button>
+          <el-button type="primary" @click="updateBtn('form')">确 定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -93,9 +93,15 @@ export default {
       this.$emit('hiddenDialogEvent')
     },
     // 确定修改
-    updateBtn () {
+    updateBtn (form) {
       // 向父组件传值$emit
-      this.$emit('updateItem', this.form)
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.$emit('updateItem', this.form)
+        } else {
+          return false
+        }
+      })
     }
   },
   // 生命周期--start
