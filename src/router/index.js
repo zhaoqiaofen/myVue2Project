@@ -35,6 +35,11 @@ export default new Router({
           component: () => import(/* webpackChunkname: 'InterfaceList' */ '../components/ComInterfaceList.vue')
         }
       ]
+    },
+    {
+      path: '/test',
+      name: 'Test',
+      component: () => import(/* webpackChunkname: 'Test' */ '../view/test.vue')
     }
   ]
 })
