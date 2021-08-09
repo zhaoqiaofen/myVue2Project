@@ -2,7 +2,7 @@
     <div>测试</div>
 </template>
 <script>
-import {test} from '../assets/js/test'
+import { test3 } from '../assets/js/test3'
 export default {
   data () {
     return {
@@ -10,7 +10,7 @@ export default {
     }
   },
   mounted () {
-    test()
+    test3()
   }
 }
 </script>

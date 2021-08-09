@@ -13,29 +13,77 @@
 // 如果有就先执行微任务队列中的任务，直到微任务队列中的任务执行完，再去宏任务中拿任务来执行，一直这样循环下去；
 // 就算某一时刻没有宏任务和微任务，它也会一直在监听任务。
 export function test () {
-  new Promise(resolve => {
-    setTimeout(() => {
-      console.log(666)
-      new Promise(resolve => {
-        resolve()
-      }).then(() => { console.log(777) })
+  // new Promise(resolve => {
+  //   setTimeout(() => {
+  //     console.log(666)
+  //     new Promise(resolve => {
+  //       resolve()
+  //     }).then(() => {
+  //       console.log(777)
+  //     })
+  //   })
+  //   resolve()
+  // }).then(() => {
+  //   new Promise(resolve => {
+  //     resolve()
+  //   }).then(() => {
+  //     console.log(111)
+  //   }).then(() => {
+  //     console.log(222)
+  //   })
+  // }).then(() => {
+  //   console.log(888)
+  //   new Promise((resolve) => {
+  //     console.log(999)
+  //     resolve()
+  //   }).then(() => {
+  //     console.log(101010)
+  //     new Promise((resolve) => {
+  //       console.log(121212)
+  //       resolve()
+  //     }).then(() => {
+  //       console.log(444)
+  //     })
+  //   }).then(() => {
+  //     console.log(555)
+  //   })
+  // }).then(() => {
+  //   console.log(333)
+  // })
+  console.log(1) // 1
+  setTimeout(() => { // 宏任务
+    console.log(2) // 11
+    Promise.resolve().then(() => { // 微任务
+      console.log(3) // 12
     })
-    resolve()
-  }).then(() => {
-    new Promise(resolve => {
-      resolve()
-    }).then(() => { console.log(111) }).then(() => { console.log(222) })
-  }).then(() => {
-    new Promise((resolve) => {
-      resolve()
-    }).then(() => {
-      new Promise((resolve) => {
-        resolve()
-      }).then(() => { console.log(444) })
-    }).then(() => {
-      console.log(555)
-    })
-  }).then(() => {
-    console.log(333)
   })
+  new Promise((resolve, reject) => {
+    console.log(4) // 2
+    resolve(5)
+  }).then((data) => { // 微任务
+    console.log('data:', data) // 6
+    Promise.resolve().then(() => { // 微任务
+      console.log(6) // 7
+    }).then(() => { // 微任务
+      console.log(7) // 8
+      setTimeout(() => { // 宏任务
+        console.log(8) // 15
+      }, 0)
+    })
+  })
+  setTimeout(() => { // 宏任务2
+    console.log(9) // 13
+  })
+  console.log(10) // 3
+
+  console.log('script start') // 4
+  setTimeout(function () { // 宏任务3
+    console.log('setTimeout') // 14
+  }, 0)
+  Promise.resolve().then(function () { // 微任务
+    console.log('promise1') // 9
+  }).then(function () { // 微任务
+    console.log('promise2') // 10
+  })
+  console.log('script end') // 5
 }
